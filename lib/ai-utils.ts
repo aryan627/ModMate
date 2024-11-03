@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
-  
+  apiKey: "Redacted",
   dangerouslyAllowBrowser: true
 });
 
@@ -123,4 +123,28 @@ export async function detectSpam(comments: string[]): Promise<boolean[]> {
   }
 
   return results;
+}
+
+export async function analyzeSentiment(text: string): Promise<string> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: "You are a sentiment analysis tool. Analyze the sentiment of the given text and respond with 'positive', 'neutral', or 'negative'.",
+        },
+        {
+          role: "user",
+          content: `Analyze the sentiment of this comment: "${text}"`,
+        }
+      ],
+      max_tokens: 50,
+    });
+
+    return response.choices[0].message.content?.trim() || 'unknown';
+  } catch (error) {
+    console.error('Error analyzing sentiment:', error);
+    return 'unknown';
+  }
 }

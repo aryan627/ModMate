@@ -2,7 +2,7 @@
 
 import MaxWidthWrapper from "@/components/common/MaxWidthWrapper";
 import { Badge } from "@/components/ui/badge";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css"; // Import Swiper styles
 
@@ -28,26 +28,32 @@ const features = [
 const comingSoonFeatures = [
   {
     title: "Advanced YouTube Analytics",
-    description:
-      "Gain deeper insights into your video performance and audience behavior.",
+    description: "Gain deeper insights into your video performance and audience behavior.",
   },
   {
     title: "Newsletter Generation",
-    description:
-      "Turn your video content into newsletters, summarizing key points for your audience.",
+    description: "Turn your video content into newsletters, summarizing key points for your audience.",
   },
   {
     title: "Automatic Chapter Generation",
-    description:
-      "Effortlessly create chapters for your videos to enhance viewer navigation.",
+    description: "Effortlessly create chapters for your videos to enhance viewer navigation.",
   },
 ];
 
 const FeaturesPage = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 200); // Delay for animation
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="overflow-hidden">
       <MaxWidthWrapper>
-        <div className="py-16 md:py-20 text-center">
+        <div className={`py-16 md:py-20 text-center transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-primary-foreground">
             Explore ModMate's Features
           </h1>
@@ -59,7 +65,7 @@ const FeaturesPage = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-secondary/50 p-6 rounded-lg hover:shadow-md transition-transform duration-500 hover:scale-105 animate-fade-in max-w-md mx-auto"
+              className={`bg-secondary/50 p-6 rounded-lg hover:shadow-md transition-transform duration-500 hover:scale-105 ${isVisible ? 'animate-fade-in' : ''} max-w-md mx-auto`}
             >
               <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
               <p className="text-muted-foreground">{feature.description}</p>
@@ -79,7 +85,7 @@ const FeaturesPage = () => {
           >
             {comingSoonFeatures.map((feature, index) => (
               <SwiperSlide key={index}>
-                <div className="relative bg-muted/50 p-6 rounded-lg shadow-md hover:shadow-lg transition-transform duration-500 hover:scale-105 animate-fade-in max-w-sm mx-auto">
+                <div className={`relative bg-muted/50 p-6 rounded-lg shadow-md hover:shadow-lg transition-transform duration-500 hover:scale-105 ${isVisible ? 'animate-fade-in' : ''} max-w-sm mx-auto`}>
                   <Badge variant="secondary" className="absolute top-2 right-2">
                     Coming Soon
                   </Badge>

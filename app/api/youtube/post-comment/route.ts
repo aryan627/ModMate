@@ -4,19 +4,15 @@ import { getAuthenticatedClient } from '@/lib/google-auth';
 
 export async function POST(request: Request) {
     try {
-        const { commentText, videoId, parentId } = await request.json();
+        const { commentText, parentId } = await request.json();
         const youtube = await getAuthenticatedClient();
 
-        const response = await youtube.commentThreads.insert({
+        const response = await youtube.comments.insert({
             part: ['snippet'],
             requestBody: {
                 snippet: {
-                    videoId: videoId,
-                    topLevelComment: {
-                        snippet: {
-                            textOriginal: commentText
-                        }
-                    }
+                    parentId: parentId,
+                    textOriginal: commentText
                 }
             }
         });
