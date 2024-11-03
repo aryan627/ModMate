@@ -4,7 +4,6 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true
 });
 
-console.log('OPENAI_API_KEY:', process.env.OPENAI_API_KEY);
 
 export async function moderateComment(text: string): Promise<{ isFlagged: boolean; reason?: string }> {
   try {
