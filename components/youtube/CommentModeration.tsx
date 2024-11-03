@@ -29,9 +29,10 @@ interface CommentModerationProps {
     };
   }>;
   type: 'legitimate' | 'spam';
+  onMoveToSpam?: (commentId: string) => void; // New prop to handle moving comments to spam
 }
 
-export default function CommentModeration({ comments, type }: CommentModerationProps) {
+export default function CommentModeration({ comments, type, onMoveToSpam }: CommentModerationProps) {
   const [currentReply, setCurrentReply] = useState('');
   const [currentCommentId, setCurrentCommentId] = useState<string | null>(null);
   const [selectedComments, setSelectedComments] = useState<Set<string>>(new Set());
@@ -177,17 +178,31 @@ export default function CommentModeration({ comments, type }: CommentModerationP
                 />
               )}
               {!comment.isSpam && (
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={() => {
-                    setCurrentCommentId(comment.id);
-                    regenerateReply();
-                  }}
-                  className="bg-purple-600 hover:bg-purple-700 text-white"
-                >
-                  Generate AI Reply
-                </Button>
+                <div className="flex space-x-2">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={() => {
+                      setCurrentCommentId(comment.id);
+                      regenerateReply();
+                    }}
+                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    Generate AI Reply
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      if (onMoveToSpam) {
+                        onMoveToSpam(comment.id);
+                      }
+                    }}
+                    className="text-red-600 border-red-600 hover:bg-red-600 hover:text-white"
+                  >
+                    Move to Spam
+                  </Button>
+                </div>
               )}
             </CardFooter>
           </Card>

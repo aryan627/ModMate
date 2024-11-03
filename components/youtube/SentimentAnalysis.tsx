@@ -14,8 +14,10 @@ interface SentimentAnalysisProps {
 }
 
 const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ comments }) => {
+  const nonSpamComments = comments.filter(comment => !comment.isSpam);
+
   const sentimentData = useMemo(() => {
-    const counts = comments.reduce((acc, comment) => {
+    const counts = nonSpamComments.reduce((acc, comment) => {
       acc[comment.sentiment] = (acc[comment.sentiment] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
@@ -25,7 +27,7 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ comments }) => {
       { name: 'Neutral', value: counts.neutral || 0 },
       { name: 'Negative', value: counts.negative || 0 },
     ];
-  }, [comments]);
+  }, [nonSpamComments]);
 
   const spamLegitimateData = useMemo(() => {
     const spamCount = comments.filter(comment => comment.isSpam).length;
@@ -53,6 +55,23 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ comments }) => {
     }
     return null;
   };
+
+  const overallSentimentInsight = useMemo(() => {
+    if (nonSpamComments.length === 0) {
+      return "No comments available for analysis.";
+    }
+
+    const positivePercentage = ((sentimentData.find(s => s.name === 'Positive')?.value || 0) / nonSpamComments.length) * 100;
+    const negativePercentage = ((sentimentData.find(s => s.name === 'Negative')?.value || 0) / nonSpamComments.length) * 100;
+
+    if (positivePercentage > 60) {
+      return "Overall, the comments section is highly positive, indicating strong approval from the audience.";
+    } else if (negativePercentage > 40) {
+      return "There is a significant amount of negative sentiment in the comments, suggesting dissatisfaction or concern among viewers.";
+    } else {
+      return "The comments section shows a mix of sentiments, reflecting diverse opinions and reactions.";
+    }
+  }, [nonSpamComments, sentimentData]);
 
   return (
     <div className="space-y-6">
@@ -117,18 +136,27 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ comments }) => {
           <CardTitle>Detailed Sentiment Analysis</CardTitle>
         </CardHeader>
         <CardContent>
-          {comments.length > 0 ? (
-            <ul className="space-y-2">
-              {comments.map(comment => (
-                <li key={comment.id} className="text-sm">
-                  <strong>Author:</strong> {comment.author || 'Unknown'} <br />
-                  <strong>Sentiment:</strong> {comment.sentiment}
-                  {comment.isSpam && <span className="ml-2 text-red-500">(Spam)</span>}
+          <p className="text-sm mb-4">{overallSentimentInsight}</p>
+          {nonSpamComments.length > 0 ? (
+            <ul className="space-y-4">
+              {nonSpamComments.map(comment => (
+                <li key={comment.id} className="text-sm border-b border-muted-foreground pb-2">
+                  <div className="mb-1">
+                    <strong>Author:</strong> <span className="text-primary">{comment.author || 'Unknown'}</span>
+                  </div>
+                  <div>
+                    <strong>Comment Insight:</strong>{' '}
+                    {comment.sentiment === 'positive'
+                      ? "This comment contributes positively to the discussion."
+                      : comment.sentiment === 'neutral'
+                      ? "This comment offers a balanced or neutral view."
+                      : "This comment may indicate criticism or a negative reaction."}
+                  </div>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="text-sm italic">No comments available for sentiment analysis.</p>
+            <p className="text-sm italic">No non-spam comments available for detailed sentiment analysis.</p>
           )}
         </CardContent>
       </Card>

@@ -124,7 +124,6 @@ export async function detectSpam(comments: string[]): Promise<boolean[]> {
 
   return results;
 }
-
 export async function analyzeSentiment(text: string): Promise<string> {
   try {
     const response = await openai.chat.completions.create({
@@ -132,17 +131,22 @@ export async function analyzeSentiment(text: string): Promise<string> {
       messages: [
         {
           role: "system",
-          content: "You are a sentiment analysis tool. Analyze the sentiment of the given text and respond with 'positive', 'neutral', or 'negative'.",
+          content: "You are a sentiment analysis tool. Analyze the sentiment of the given text and respond only with 'positive', 'neutral', or 'negative'. Do not include any other text or explanations.",
         },
         {
           role: "user",
           content: `Analyze the sentiment of this comment: "${text}"`,
         }
       ],
-      max_tokens: 50,
+      max_tokens: 10,
     });
 
-    return response.choices[0].message.content?.trim() || 'unknown';
+    // Ensure only the sentiment is returned without any extra text
+    const sentiment = response.choices[0].message.content?.trim().toLowerCase() || 'unknown';
+    if (['positive', 'neutral', 'negative'].includes(sentiment)) {
+      return sentiment;
+    }
+    return 'unknown';
   } catch (error) {
     console.error('Error analyzing sentiment:', error);
     return 'unknown';
