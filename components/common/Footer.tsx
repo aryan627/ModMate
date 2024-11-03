@@ -39,7 +39,7 @@ export default function Footer() {
               <FaYoutube className="h-6 w-6" />
             </Link>
             <Link
-              href="https://x.com/modmate"
+              href="https://www.linkedin.com/in/arya-nagabhyru-372514232/"
               className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
               prefetch={false}
               target="_blank"
@@ -58,7 +58,7 @@ export default function Footer() {
           <p className="text-gray-500 dark:text-gray-400">
             Designed and developed by{" "}
             <Link
-              href="https://www.linkedin.com/in/arya-nagabhyru/"
+              href="https://www.linkedin.com/in/arya-nagabhyru-372514232/"
               className="text-gray-900 hover:underline dark:text-gray-50"
               prefetch={false}
               target="_blank"

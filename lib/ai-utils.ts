@@ -141,7 +141,6 @@ export async function analyzeSentiment(text: string): Promise<string> {
       max_tokens: 10,
     });
 
-    // Ensure only the sentiment is returned without any extra text
     const sentiment = response.choices[0].message.content?.trim().toLowerCase() || 'unknown';
     if (['positive', 'neutral', 'negative'].includes(sentiment)) {
       return sentiment;

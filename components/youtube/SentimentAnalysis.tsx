@@ -3,6 +3,7 @@
 import React, { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { Button } from "@/components/ui/button";
 
 interface SentimentAnalysisProps {
   comments: Array<{
@@ -65,16 +66,27 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ comments }) => {
     const negativePercentage = ((sentimentData.find(s => s.name === 'Negative')?.value || 0) / nonSpamComments.length) * 100;
 
     if (positivePercentage > 60) {
-      return "Overall, the comments section is highly positive, indicating strong approval from the audience.";
+      return "Overall, the comment section is highly positive, indicating a strong approval from the audience.";
     } else if (negativePercentage > 40) {
-      return "There is a significant amount of negative sentiment in the comments, suggesting dissatisfaction or concern among viewers.";
+      return "There is a noticeable amount of negative sentiment in the comments, indicating potential dissatisfaction or concern among viewers.";
     } else {
-      return "The comments section shows a mix of sentiments, reflecting diverse opinions and reactions.";
+      return "The comment section reflects a mix of sentiments, showing diverse opinions and reactions.";
     }
   }, [nonSpamComments, sentimentData]);
 
   return (
     <div className="space-y-6">
+      {/* Refresh Button */}
+      <div className="flex justify-center mb-4">
+        <Button 
+          variant="destructive" 
+          onClick={() => window.location.reload()} 
+          className="bg-red-600 hover:bg-red-700 text-white"
+        >
+          Refresh Page
+        </Button>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>Sentiment Analysis</CardTitle>
@@ -133,31 +145,10 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ comments }) => {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Detailed Sentiment Analysis</CardTitle>
+          <CardTitle>Detailed Sentiment Insight</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm mb-4">{overallSentimentInsight}</p>
-          {nonSpamComments.length > 0 ? (
-            <ul className="space-y-4">
-              {nonSpamComments.map(comment => (
-                <li key={comment.id} className="text-sm border-b border-muted-foreground pb-2">
-                  <div className="mb-1">
-                    <strong>Author:</strong> <span className="text-primary">{comment.author || 'Unknown'}</span>
-                  </div>
-                  <div>
-                    <strong>Comment Insight:</strong>{' '}
-                    {comment.sentiment === 'positive'
-                      ? "This comment contributes positively to the discussion."
-                      : comment.sentiment === 'neutral'
-                      ? "This comment offers a balanced or neutral view."
-                      : "This comment may indicate criticism or a negative reaction."}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm italic">No non-spam comments available for detailed sentiment analysis.</p>
-          )}
+          <p className="text-sm">{overallSentimentInsight}</p>
         </CardContent>
       </Card>
     </div>
