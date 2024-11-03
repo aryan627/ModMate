@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
@@ -16,7 +16,7 @@ interface CommentModerationProps {
   comments: Array<{
     id: string;
     isSpam: boolean;
-    sentiment?: 'positive' | 'neutral' | 'negative';
+    sentiment: 'positive' | 'neutral' | 'negative';
     snippet?: {
       topLevelComment?: {
         snippet?: {
@@ -36,10 +36,6 @@ export default function CommentModeration({ comments, type }: CommentModerationP
   const [currentCommentId, setCurrentCommentId] = useState<string | null>(null);
   const [selectedComments, setSelectedComments] = useState<Set<string>>(new Set());
   const { toast } = useToast();
-
-  useEffect(() => {
-    // Effect hook if needed for additional logic
-  }, [comments]);
 
   const handlePostReply = async () => {
     if (currentCommentId && currentReply) {
@@ -103,7 +99,7 @@ export default function CommentModeration({ comments, type }: CommentModerationP
   };
 
   return (
-    <div className="flex-1 space-y-6">
+    <div className="space-y-6">
       {type === 'spam' && (
         <Card>
           <CardHeader className="pb-3">
@@ -146,7 +142,19 @@ export default function CommentModeration({ comments, type }: CommentModerationP
                   <p className="text-sm font-medium">{comment.snippet?.topLevelComment?.snippet?.authorDisplayName || 'Unknown'}</p>
                   <p className="text-xs text-muted-foreground">{comment.snippet?.topLevelComment?.snippet?.likeCount || 0} likes</p>
                 </div>
-                {comment.isSpam && <Badge variant="destructive">Spam</Badge>}
+                {!comment.isSpam && comment.sentiment && (
+                  <Badge
+                    variant={
+                      comment.sentiment === 'positive'
+                        ? 'default'
+                        : comment.sentiment === 'negative'
+                        ? 'destructive'
+                        : 'secondary'
+                    }
+                  >
+                    {comment.sentiment.charAt(0).toUpperCase() + comment.sentiment.slice(1)}
+                  </Badge>
+                )}
               </div>
             </CardHeader>
             <CardContent>
